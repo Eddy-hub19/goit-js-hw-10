@@ -16,14 +16,24 @@ const refs = {
   itemRef: document.querySelector('.country-info'),
 };
 
-fetch('https://restcountries.com/v3.1/name/united')
-  .then(response => {
-    return response.json();
-  })
-  //   .then(markup)
-  .then(data => {
-    markupItem(data);
-  });
+function fetchCountries(name) {
+  fetch('https://restcountries.com/v3.1/name/united')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(response.status);
+      }
+      return response.json();
+    })
+    //   .then(markup)
+    .then(data => {
+      markupItem(data);
+      Notify.success('Yes');
+    })
+    .catch(error => {
+      console.log(error);
+      Notify.failure('No');
+    });
+}
 
 refs.input.addEventListener('input', onClickInput);
 
@@ -31,7 +41,13 @@ function onClickInput(event) {
   event.preventDefault();
 
   const inputTarget = event.currentTarget.value;
-  refs.listRef.innerHTML = inputTarget;
+  // refs.listRef.innerHTML = inputTarget;
+
+  if (inputTarget.length === 2) {
+    fetchCountries();
+  } else {
+    Notify.failure('No');
+  }
 }
 
 // function markup(data) {
