@@ -17,14 +17,13 @@ const refs = {
 };
 
 function fetchCountries(name) {
-  fetch('https://restcountries.com/v3.1/name/united')
+  fetch(`https://restcountries.com/v3.1/name/${name}`)
     .then(response => {
       if (!response.ok) {
         throw new Error(response.status);
       }
       return response.json();
     })
-    //   .then(markup)
     .then(data => {
       markupItem(data);
       Notify.success('Yes');
@@ -41,28 +40,32 @@ function onClickInput(event) {
   event.preventDefault();
 
   const inputTarget = event.currentTarget.value;
-  // refs.listRef.innerHTML = inputTarget;
 
-  if (inputTarget.length === 2) {
-    fetchCountries();
+  if (inputTarget.length >= 2) {
+    fetchCountries(inputTarget);
   } else {
-    Notify.failure('No');
+    Notify.failure(
+      'Too many matches found. Please enter a more specific name.'
+    );
   }
+  //   if (inputTarget.length < 3) {
+  //     markup();
+  //   }
 }
 
-// function markup(data) {
-//   const mapData = data.map(
-//     ({ name, capital, population, flags, languages }) => {
-//       return /*html*/ `
-//             <h2>${name.official}</h2>
-//             <p>${capital}</p>
-//             <div>${population}</div>
-//             <img class="country-flag" src="${flags.svg}" alt="">
-//             <span>${languages.spa}</span>`;
-//     }
-//   );
-//   refs.itemRef.innerHTML = mapData;
-// }
+function markup(data) {
+  const mapData = data.map(
+    ({ name, capital, population, flags, languages }) => {
+      return /*html*/ `
+            <h2>${name.official}</h2>
+            <p>${capital}</p>
+            <div>${population}</div>
+            <img class="country-flag" src="${flags.svg}" alt="">
+            <span>${languages.spa}</span>`;
+    }
+  );
+  refs.itemRef.innerHTML = mapData;
+}
 
 function markupItem(data) {
   const createMarkup = data.map(({ name, flags }) => {
